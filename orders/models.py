@@ -11,10 +11,10 @@ class Payment(models.Model):
     amount_paid = models.CharField(max_length=100) # this is the total amount paid
     status = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         return self.payment_id
-
 
 class Order(models.Model):
     STATUS = (
@@ -45,6 +45,9 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # 🔽 Add these here
+    is_cancelled = models.BooleanField(default=False)
+    cancellation_reason = models.TextField(blank=True, null=True)
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
