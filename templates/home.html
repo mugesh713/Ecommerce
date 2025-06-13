@@ -2,54 +2,87 @@
 {% load static %}
 {% block content %}
 
+<!-- Add the new CSS file -->
+<link href="{% static 'css/home.css' %}" rel="stylesheet" type="text/css"/>
+
 <!-- ========================= SECTION MAIN ========================= -->
 <section class="section-intro padding-y-sm">
-<div class="container">
-
-<div class="intro-banner-wrap">
-	<img src="{% static 'images/banners/1.jpg' %}" class="img-fluid rounded">
-</div>
-
-</div> <!-- container //  -->
+    <div class="container">
+        <div class="home-hero">
+            <img src="{% static 'images/banners/1.jpg' %}" class="img-fluid">
+            
+            </div>
+        </div>
+    </div>
 </section>
 <!-- ========================= SECTION MAIN END// ========================= -->
 
-<!-- ========================= SECTION  ========================= -->
+<!-- ========================= SECTION POPULAR PRODUCTS ========================= -->
 <section class="section-name padding-y-sm">
-<div class="container">
+    <div class="container">
+        <header class="home-section-heading d-flex justify-content-between align-items-center">
+            <h3 class="home-section-title">Popular Products</h3>
+            <a href="{% url 'store' %}" class="btn btn-outline-primary">View All Products</a>
+        </header>
 
-<header class="section-heading">
-	<a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
-	<h3 class="section-title">Popular products</h3>
-</header><!-- sect-heading -->
-
-	
-<div class="row">
-	{% for product in products %}
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="{{ product.get_url }}" class="img-wrap"> <img src="{{ product.image.url }}"> </a>
-			<figcaption class="info-wrap">
-				<a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
-				<div class="price mt-1">Rs {{ product.price }} <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	{% endfor %}
-	</div> <!-- row.// -->
-
-</div><!-- container // -->
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-3 col-6">
+                <div class="card home-product-card">
+                    <a href="{{ product.get_url }}" class="home-product-img-wrap"> 
+                        <img src="{{ product.image.url }}" alt="{{ product.product_name }}">
+                    </a>
+                    <div class="home-product-info">
+                        <a href="{{ product.get_url }}" class="home-product-title">{{ product.product_name }}</a>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <span class="home-product-price">Rs {{ product.price }}</span>
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fa fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </section>
-<!-- ========================= SECTION  END// ========================= -->
+<!-- ========================= SECTION POPULAR PRODUCTS END// ========================= -->
 
-
-
-
-<!-- ========================= FOOTER ========================= -->
-
-<!-- ========================= FOOTER END // ========================= -->
-
-</body>
-</html>
+<!-- ========================= SECTION FEATURES ========================= -->
+<section class="section-name padding-y-sm bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body">
+                        <i class="fa fa-truck fa-3x text-primary mb-3"></i>
+                        <h5>Free Shipping</h5>
+                        <p class="text-muted">On orders over Rs 1000</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body">
+                        <i class="fa fa-undo fa-3x text-primary mb-3"></i>
+                        <h5>Easy Returns</h5>
+                        <p class="text-muted">30-day return policy</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body">
+                        <i class="fa fa-lock fa-3x text-primary mb-3"></i>
+                        <h5>Secure Payment</h5>
+                        <p class="text-muted">100% secure payment</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ========================= SECTION FEATURES END// ========================= -->
 
 {% endblock %}

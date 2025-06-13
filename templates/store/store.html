@@ -3,14 +3,20 @@
 
 {% block content %}
 <!-- ========================= SECTION PAGETOP ========================= -->
-<section class="section-pagetop bg">
-<div class="container">
-	{% if 'search' in request.path %}
-		<h2 class="title-page">Search Result</h2>
-	{% else %}
-		<h2 class="title-page">Our Store</h2>
-	{% endif %}
-</div> <!-- container //  -->
+<section class="section-pagetop bg-primary bg-gradient py-4">
+<div class="container text-white">
+    {% if 'search' in request.path %}
+        <h2 class="title-page display-6">Search Results for "{{ keyword }}"</h2>
+    {% else %}
+        <h2 class="title-page display-6">Our Store</h2>
+    {% endif %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">Store</li>
+        </ol>
+    </nav>
+</div>
 </section>
 <!-- ========================= SECTION INTRO END// ========================= -->
 
@@ -19,95 +25,213 @@
 <div class="container">
 
 <div class="row">
-	<aside class="col-md-3">
-		<div class="card">
-			<article class="filter-group">
-				<header class="card-header">
-					<a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
-						<i class="icon-control fa fa-chevron-down"></i>
-						<h6 class="title">Categories</h6>
-					</a>
-				</header>
-				<div class="filter-content collapse show" id="collapse_1" style="">
-					<div class="card-body">
-						<ul class="list-menu">
-							<li><a href="{% url 'store' %}">All Products</a></li>
-							{% for category in links %}
-								<li><a href="{{ category.get_url }}">{{ category.category_name }}</a></li>
-							{% endfor %}
-						</ul>
-					</div> <!-- card-body.// -->
-				</div>
-			</article>
-		</div> <!-- card.// -->
-	</aside> <!-- col.// -->
-	<main class="col-md-9">
-		<header class="border-bottom mb-4 pb-3">
-			<div class="form-inline">
-				<span class="mr-md-auto"><b>{{ product_count }}</b> items found</span>
-			</div>
-		</header><!-- sect-heading -->
+    <aside class="col-md-3">
+        <div class="card shadow-sm">
+            <article class="filter-group">
+                <header class="card-header bg-light">
+                    <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="d-flex justify-content-between align-items-center text-dark">
+                        <h6 class="title mb-0"><i class="fas fa-list mr-2"></i>Categories</h6>
+                        <i class="icon-control fa fa-chevron-down"></i>
+                    </a>
+                </header>
+                <div class="filter-content collapse show" id="collapse_1">
+                    <div class="card-body">
+                        <ul class="list-menu list-group list-group-flush">
+                            <li class="list-group-item"><a href="{% url 'store' %}" class="text-dark"><i class="fas fa-boxes mr-2"></i>All Products</a></li>
+                            {% for category in links %}
+                                <li class="list-group-item"><a href="{{ category.get_url }}" class="text-dark"><i class="fas fa-box mr-2"></i>{{ category.category_name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </article>
+        </div>
+        
+        <!-- Filters Card -->
+        <div class="card mt-3 shadow-sm">
+            <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="fas fa-filter mr-2"></i>Filters</h6>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{% if 'search' in request.path %}{% url 'search' %}{% else %}{% url 'store' %}{% endif %}">
+                    {% if 'search' in request.path %}
+                        <input type="hidden" name="keyword" value="{{ keyword }}">
+                    {% endif %}
+                    <div class="form-group">
+                        <label>Price Range</label>
+                        <div class="d-flex justify-content-between mb-2">
+                            <input type="number" class="form-control form-control-sm" name="min_price" placeholder="Min" value="{{ request.GET.min_price }}">
+                            <span class="px-2">to</span>
+                            <input type="number" class="form-control form-control-sm" name="max_price" placeholder="Max" value="{{ request.GET.max_price }}">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                    {% if request.GET.min_price or request.GET.max_price %}
+                        <a href="{% if 'search' in request.path %}{% url 'search' %}?keyword={{ keyword }}{% else %}{% url 'store' %}{% endif %}" class="btn btn-outline-secondary btn-block mt-2">Clear Filters</a>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </aside>
+    
+    <main class="col-md-9">
+        <header class="border-bottom mb-4 pb-3 d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <div class="mb-2 mb-md-0">
+                <span class="text-muted"><b>{{ product_count }}</b> {% if product_count == 1 %}item{% else %}items{% endif %} found</span>
+            </div>
+            <div class="form-inline">
+                <form method="GET" action="{% if 'search' in request.path %}{% url 'search' %}{% else %}{% url 'store' %}{% endif %}" class="mr-2">
+                    {% if 'search' in request.path %}
+                        <input type="hidden" name="keyword" value="{{ keyword }}">
+                    {% endif %}
+                    {% if request.GET.min_price %}
+                        <input type="hidden" name="min_price" value="{{ request.GET.min_price }}">
+                    {% endif %}
+                    {% if request.GET.max_price %}
+                        <input type="hidden" name="max_price" value="{{ request.GET.max_price }}">
+                    {% endif %}
+                    <select name="sort" class="form-control" onchange="this.form.submit()">
+                        <option value="">Sort by default</option>
+                        <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest first</option>
+                    </select>
+                </form>
+                <div class="btn-group">
+                    <button class="btn btn-outline-secondary active" data-toggle="tooltip" title="Grid view">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary" data-toggle="tooltip" title="List view">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
 
-		<div class="row">
-			{% if products %}
-				{% for product in products %}
-					<div class="col-md-4">
-						<figure class="card card-product-grid">
-							<div class="img-wrap">
-								<a href="{{ product.get_url }}"><img src="{{ product.image.url }}"></a>
-							</div> <!-- img-wrap.// -->
-							<figcaption class="info-wrap">
-								<div class="fix-height">
-									<a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
-									<div class="price-wrap mt-2">
-										<span class="price">₹{{ product.price }}</span>
-									</div> <!-- price-wrap.// -->
-								</div> <!-- fix-height.// -->
+        {% if products %}
+        <div class="row">
+            {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card card-product-grid h-100 shadow-sm">
+                        <div class="img-wrap position-relative">
+                            <a href="{{ product.get_url }}">
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.product_name }}">
+                            </a>
+                            {% if product.is_new %}
+                            <span class="badge badge-danger position-absolute" style="top: 10px; right: 10px">New</span>
+                            {% endif %}
+                            {% if product.discount_price %}
+                            <span class="badge badge-success position-absolute" style="top: 10px; left: 10px">-{{ product.get_discount_percentage }}%</span>
+                            {% endif %}
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <a href="{{ product.get_url }}" class="title font-weight-bold text-dark">{{ product.product_name }}</a>
+                            <div class="price-wrap mt-2 mb-3">
+                                {% if product.discount_price %}
+                                    <span class="price h5">₹{{ product.discount_price }}</span>
+                                    <del class="price-old text-muted">₹{{ product.price }}</del>
+                                {% else %}
+                                    <span class="price h5">₹{{ product.price }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="mt-auto">
+                                <a href="{{ product.get_url }}" class="btn btn-outline-primary btn-block btn-sm">View Details</a>
+                                <form action="{% url 'add_cart' product.id %}" method="POST" class="add-to-cart-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-primary btn-block btn-sm mt-2">Add to Cart</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center py-5">
+            <i class="fas fa-search fa-3x mb-3"></i>
+            <h2>No products found</h2>
+            <p class="lead">Please try a different search term or browse our categories.</p>
+            <a href="{% url 'store' %}" class="btn btn-primary">Browse All Products</a>
+        </div>
+        {% endif %}
 
-								<!-- Button -->
-								<a href="{{ product.get_url }}" class="btn btn-primary btn-block btn-sm">View Details</a>
-							</figcaption>
-						</figure>
-					</div> <!-- col.// -->
-				{% endfor %}
-			{% else %}
-				<div>
-					<h2>No result found. Please try again.</h2>
-				</div>
-			{% endif %}
-		</div> <!-- row end.// -->
+        <nav class="mt-4" aria-label="Page navigation">
+            {% if products.has_other_pages %}
+                <ul class="pagination justify-content-center">
+                    {% if products.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ products.previous_page_number }}{% if request.GET.keyword %}&keyword={{ request.GET.keyword }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
 
-		<nav class="mt-4" aria-label="Page navigation sample">
-			{% if products.has_other_pages %}
-				<ul class="pagination">
-					{% if products.has_previous %}
-						<li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}">Previous</a></li>
-					{% else %}
-						<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-					{% endif %}
+                    {% for i in products.paginator.page_range %}
+                        {% if products.number == i %}
+                            <li class="page-item active" aria-current="page">
+                                <a class="page-link" href="#">{{ i }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ i }}{% if request.GET.keyword %}&keyword={{ request.GET.keyword }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ i }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
 
-					{% for i in products.paginator.page_range %}
-						{% if products.number == i %}
-							<li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
-						{% else %}
-							<li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
-						{% endif %}
-					{% endfor %}
-
-					{% if products.has_next %}
-						<li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}">Next</a></li>
-					{% else %}
-						<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
-					{% endif %}
-				</ul>
-			{% endif %}
-		</nav>
-
-	</main> <!-- col.// -->
+                    {% if products.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ products.next_page_number }}{% if request.GET.keyword %}&keyword={{ request.GET.keyword }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            {% endif %}
+        </nav>
+    </main>
 </div>
-
-</div> <!-- container .//  -->
+</div>
 </section>
-<!-- ========================= SECTION CONTENT END// ========================= -->
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Add to cart AJAX
+    $('.add-to-cart-form').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        
+        $.ajax({
+            type: 'POST',
+            url: form.attr('action'),
+            data: form.serialize(),
+            success: function(response) {
+                $('#cart-count').text(response.cart_count);
+                toastr.success('Product added to cart successfully!');
+            },
+            error: function(xhr, errmsg, err) {
+                toastr.error('Error adding product to cart');
+            }
+        });
+    });
+
+    // Tooltip initialization
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 {% endblock %}

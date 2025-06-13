@@ -1,0 +1,126 @@
+/* Homepage Specific Styles */
+
+/* Hero Section */
+.home-hero {
+    position: relative;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.home-hero img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.home-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+}
+
+.home-hero-content {
+    max-width: 600px;
+    color: white;
+}
+
+.home-hero-content h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.home-hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.home-hero-btn {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+}
+
+/* Product Cards */
+.home-product-card {
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+    border: none;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
+.home-product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.home-product-img-wrap {
+    padding: 1rem;
+    text-align: center;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.home-product-img-wrap img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.home-product-info {
+    padding: 1.25rem;
+}
+
+.home-product-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.home-product-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #28a745;
+}
+
+/* Section Headings */
+.home-section-heading {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+
+.home-section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .home-hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .home-hero-content p {
+        font-size: 1rem;
+    }
+    
+    .home-product-card {
+        margin-bottom: 1rem;
+    }
+}

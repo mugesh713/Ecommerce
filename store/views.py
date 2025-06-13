@@ -3,7 +3,6 @@ from .models import Product, ReviewRating, ProductGallery
 from category.models import Category
 from carts.models import CartItem
 from django.db.models import Q
-
 from carts.views import _cart_id
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse
@@ -16,19 +15,42 @@ def store(request, category_slug=None):
     categories = None
     products = None
 
-    if category_slug != None:
+    if category_slug is not None:
         categories = get_object_or_404(Category, slug=category_slug)
         products = Product.objects.filter(category=categories, is_available=True)
-        paginator = Paginator(products, 1)
-        page = request.GET.get('page')
-        paged_products = paginator.get_page(page)
-        product_count = products.count()
     else:
-        products = Product.objects.all().filter(is_available=True).order_by('id')
-        paginator = Paginator(products, 3)
-        page = request.GET.get('page')
-        paged_products = paginator.get_page(page)
-        product_count = products.count()
+        products = Product.objects.filter(is_available=True)
+
+    # Price filtering
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    if min_price:
+        products = products.filter(price__gte=min_price)
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    # Sorting
+    sort = request.GET.get('sort')
+    if sort == 'price_asc':
+        products = products.order_by('price')
+    elif sort == 'price_desc':
+        products = products.order_by('-price')
+    elif sort == 'newest':
+        products = products.order_by('-created_date')
+    else:
+        products = products.order_by('id')
+
+    product_count = products.count()
+    
+    # Pagination
+    paginator = Paginator(products, 6)  # Show 6 products per page
+    page = request.GET.get('page')
+    try:
+        paged_products = paginator.page(page)
+    except PageNotAnInteger:
+        paged_products = paginator.page(1)
+    except EmptyPage:
+        paged_products = paginator.page(paginator.num_pages)
 
     context = {
         'products': paged_products,
@@ -60,7 +82,7 @@ def product_detail(request, category_slug, product_slug):
 
     context = {
         'single_product': single_product,
-        'in_cart'       : in_cart,
+        'in_cart': in_cart,
         'orderproduct': orderproduct,
         'reviews': reviews,
         'product_gallery': product_gallery,
@@ -72,11 +94,24 @@ def search(request):
     if 'keyword' in request.GET:
         keyword = request.GET['keyword']
         if keyword:
-            products = Product.objects.order_by('-created_date').filter(Q(description__icontains=keyword) | Q(product_name__icontains=keyword))
+            products = Product.objects.order_by('-created_date').filter(
+                Q(description__icontains=keyword) | 
+                Q(product_name__icontains=keyword)
+            )
             product_count = products.count()
+    
+    # Preserve filters in search results
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    if min_price:
+        products = products.filter(price__gte=min_price)
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
     context = {
         'products': products,
         'product_count': product_count,
+        'keyword': keyword,
     }
     return render(request, 'store/store.html', context)
 
