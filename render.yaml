@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: agri-django-app
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn Agri.wsgi:application"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: Agri.settings
+      - key: SECRET_KEY
+        value: g7d95*g5+si_@ms#98k$2unke!77j@y&d%b=p!77&i1b6m-&k(
+      - key: DEBUG
+        value: False

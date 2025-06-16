@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = 'g7d95*g5+si_@ms#98k$2unke!77j@y&d%b=p!77&i1b6m-&k('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -153,3 +153,6 @@ EMAIL_HOST_PASSWORD = 'etpf rzaj bfhu rsub'  # App Password
 
 
 
+import os
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
