@@ -1,0 +1,161 @@
+/* Product Gallery Styles */
+.gallery-wrap {
+    position: relative;
+}
+
+.img-big-wrap {
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #f8f9fa;
+    text-align: center;
+    padding: 20px;
+}
+
+.img-big-wrap img {
+    max-height: 400px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.img-small-wrap {
+    text-align: center;
+}
+
+.item-thumb {
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.item-thumb:hover {
+    border-color: #007bff;
+    transform: translateY(-3px);
+}
+
+.thumbnail-img {
+    height: 60px;
+    object-fit: cover;
+    border-radius: 3px;
+}
+
+/* Product Details Styles */
+.content-body {
+    padding: 20px;
+}
+
+.price {
+    color: #0a58ca;
+    font-weight: 600;
+}
+
+.price-old {
+    font-size: 80%;
+}
+
+/* Rating Stars */
+.rating-star {
+    color: #ffb503;
+    font-size: 16px;
+}
+
+/* Review Form Styles */
+.rate {
+    display: inline-block;
+    border: 0;
+    margin-bottom: 10px;
+}
+
+.rate > input {
+    display: none;
+}
+
+.rate > label {
+    float: right;
+    font-size: 24px;
+    color: #ddd;
+    margin: 0 2px;
+}
+
+.rate > label:before {
+    content: '\f005';
+    font-family: FontAwesome;
+}
+
+.rate .half:before {
+    content: '\f089';
+    position: absolute;
+}
+
+.rate > input:checked ~ label,
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #ffb503;
+}
+
+.rate > input:checked + label:hover,
+.rate > input:checked ~ label:hover,
+.rate > label:hover ~ input:checked ~ label {
+    color: #cc9000;
+}
+
+/* Product Highlights */
+.list-check {
+    list-style: none;
+    padding-left: 0;
+}
+
+.list-check li {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 8px;
+}
+
+.list-check li:before {
+    content: "\f00c";
+    font-family: FontAwesome;
+    color: #28a745;
+    position: absolute;
+    left: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .img-big-wrap {
+        padding: 10px;
+    }
+    
+    .img-big-wrap img {
+        max-height: 300px;
+    }
+    
+    .thumbnail-img {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Animation for Add to Cart Button */
+.btn-primary {
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+/* Review Cards */
+.review-list .card {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+}
+
+.review-list .card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+}

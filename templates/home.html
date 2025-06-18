@@ -2,87 +2,141 @@
 {% load static %}
 {% block content %}
 
-<!-- Add the new CSS file -->
-<link href="{% static 'css/home.css' %}" rel="stylesheet" type="text/css"/>
-
-<!-- ========================= SECTION MAIN ========================= -->
-<section class="section-intro padding-y-sm">
-    <div class="container">
-        <div class="home-hero">
-            <img src="{% static 'images/banners/1.jpg' %}" class="img-fluid">
+<!-- ========================= HERO CAROUSEL ========================= -->
+<section class="hero-section">
+    <div class="container-fluid px-0">
+        <div id="homeCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="2"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="{% static 'images/banners/new_add.jpg' %}" class="d-block w-100" alt="Agricultural Equipment" style="height: 500px; object-fit: cover;">
+                </div>
+                <div class="carousel-item">
+                    <img src="{% static 'images/banners/2.jpg' %}" class="d-block w-100" alt="Farm Equipment" style="height: 500px; object-fit: cover;">
+                </div>
+                <div class="carousel-item">
+                    <img src="{% static 'images/banners/3.jpg' %}" class="d-block w-100" alt="Agricultural Tools" style="height: 500px; object-fit: cover;">
+                </div>
+            </div>
             
-            </div>
         </div>
     </div>
 </section>
-<!-- ========================= SECTION MAIN END// ========================= -->
 
-<!-- ========================= SECTION POPULAR PRODUCTS ========================= -->
+<!-- Rest of your template remains the same -->
 <section class="section-name padding-y-sm">
-    <div class="container">
-        <header class="home-section-heading d-flex justify-content-between align-items-center">
-            <h3 class="home-section-title">Popular Products</h3>
-            <a href="{% url 'store' %}" class="btn btn-outline-primary">View All Products</a>
-        </header>
+<div class="container">
 
-        <div class="row">
-            {% for product in products %}
-            <div class="col-md-3 col-6">
-                <div class="card home-product-card">
-                    <a href="{{ product.get_url }}" class="home-product-img-wrap"> 
-                        <img src="{{ product.image.url }}" alt="{{ product.product_name }}">
-                    </a>
-                    <div class="home-product-info">
-                        <a href="{{ product.get_url }}" class="home-product-title">{{ product.product_name }}</a>
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <span class="home-product-price">Rs {{ product.price }}</span>
-                            <button class="btn btn-sm btn-outline-secondary">
-                                <i class="fa fa-shopping-cart"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-<!-- ========================= SECTION POPULAR PRODUCTS END// ========================= -->
+<header class="section-heading">
+    <a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
+    <h3 class="section-title">Popular products</h3>
+</header><!-- sect-heading -->
 
-<!-- ========================= SECTION FEATURES ========================= -->
-<section class="section-name padding-y-sm bg-light">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-4">
-                <div class="card border-0 bg-transparent">
-                    <div class="card-body">
-                        <i class="fa fa-truck fa-3x text-primary mb-3"></i>
-                        <h5>Free Shipping</h5>
-                        <p class="text-muted">On orders over Rs 1000</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 bg-transparent">
-                    <div class="card-body">
-                        <i class="fa fa-undo fa-3x text-primary mb-3"></i>
-                        <h5>Easy Returns</h5>
-                        <p class="text-muted">30-day return policy</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 bg-transparent">
-                    <div class="card-body">
-                        <i class="fa fa-lock fa-3x text-primary mb-3"></i>
-                        <h5>Secure Payment</h5>
-                        <p class="text-muted">100% secure payment</p>
-                    </div>
-                </div>
-            </div>
+<div class="row">
+    {% for product in products %}
+    <div class="col-md-3">
+        <div class="card card-product-grid">
+            <a href="{{ product.get_url }}" class="img-wrap"> 
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.product_name }}">
+                {% else %}
+                    <img src="{% static 'images/placeholder.jpg' %}" alt="No image available">
+                {% endif %}
+            </a>
+            <figcaption class="info-wrap">
+                <a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
+                <div class="price mt-1">Rs {{ product.price }}</div>
+            </figcaption>
         </div>
-    </div>
+    </div> <!-- col.// -->
+    {% endfor %}
+</div> <!-- row.// -->
+
+</div><!-- container // -->
 </section>
-<!-- ========================= SECTION FEATURES END// ========================= -->
+<!-- ========================= SECTION  END// ========================= -->
+
+<style>
+    /* Custom Styles */
+    .hero-section {
+        position: relative;
+        margin-bottom: 30px;
+    }
+    
+    .carousel {
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 5%;
+    }
+    
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: rgba(0,0,0,0.5);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        background-size: 60%;
+    }
+    
+    .card-product-grid .img-wrap {
+        height: 220px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .card-product-grid .img-wrap img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    
+    .card-product-grid {
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .card-product-grid:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .section-title {
+        position: relative;
+        display: inline-block;
+        padding-bottom: 15px;
+    }
+    
+    .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 80px;
+        height: 4px;
+        background: #0d6efd;
+        border-radius: 2px;
+    }
+</style>
+
+<script>
+// Initialize carousel with options
+document.addEventListener('DOMContentLoaded', function() {
+    var myCarousel = document.getElementById('homeCarousel');
+    var carousel = new bootstrap.Carousel(myCarousel, {
+        interval: 3000,  // 3 seconds interval
+        wrap: true,      // Infinite looping
+        pause: "hover"   // Pause on hover
+    });
+});
+</script>
 
 {% endblock %}

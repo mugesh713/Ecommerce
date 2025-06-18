@@ -21,9 +21,8 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'g7d95*g5+si_@ms#98k$2unke!77j@y&d%b=p!77&i1b6m-&k('
-
+DEBUG = True  # Change back to False in production
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -139,6 +138,7 @@ STATICFILES_DIRS = [
 MEDIA_URL='/media/'
 MEDIA_ROOT=BASE_DIR/'media'
 
+
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR:'danger',
@@ -153,6 +153,3 @@ EMAIL_HOST_PASSWORD = 'etpf rzaj bfhu rsub'  # App Password
 
 
 
-import os
-if not DEBUG:
-    SECURE_SSL_REDIRECT = True

@@ -34,9 +34,7 @@ Once the information is submitted, the product owner will contact the customer d
 
 This process is followed strictly for the safety and security of both customers and sellers.
 
-Thank you for your understanding and cooperation.
-
-</p>
+Thank you for your understanding and cooperation.</p>
                     </div>
                 </div>
                 
@@ -93,10 +91,6 @@ Thank you for your understanding and cooperation.
                         <dl class="dlist-align">
                             <dt>Total price:</dt>
                             <dd class="text-right">₹ {{total}}</dd>
-                        </dl>
-                        <dl class="dlist-align">
-                            <dt>Tax:</dt>
-                            <dd class="text-right"> ₹ {{tax}}</dd>
                         </dl>
                         <dl class="dlist-align">
                             <dt>Grand Total:</dt>
@@ -159,7 +153,7 @@ document.getElementById('whatsappConfirmBtn').addEventListener('click', function
                 </div>
             `;
             setTimeout(() => {
-                window.location.href = "{% url 'order_complete' %}?order_number=" + data.order_number + "&payment_id=" + data.transID;
+                window.location.href = "{% url 'order_complete' %}?order_number=" + data.order_number + "&payment_id=" + data.payment_id;
             }, 2000);
         } else {
             statusDiv.innerHTML = `
