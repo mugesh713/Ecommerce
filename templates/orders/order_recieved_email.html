@@ -1,9 +1,14 @@
 {% autoescape off %}
+Hi {{ user.first_name }},
 
-Hi {{user.first_name}},
+YOUR ORDER HAS BEEN RECEIVED
 
-YOUR ORDER HAS BEEN RECIEVED
+Order Number: {{ order.order_number }}
+Order Date: {{ order.created_at|date:"F j, Y" }}
+Order Total: ₹{{ order.order_total }}
 
-Order Number: {{order.order_number}}
+Thank you for your order! We'll contact you shortly via WhatsApp on {{ admin_contact }}.
 
+Regards,
+Agri Traders Team
 {% endautoescape %}

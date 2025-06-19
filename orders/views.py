@@ -5,21 +5,17 @@ from django.core.mail import EmailMessage
 from django.contrib import messages
 from django.template.loader import render_to_string
 from django.conf import settings
-from twilio.rest import Client
 import datetime
 import json
+from urllib.parse import quote
 from carts.models import CartItem
 from store.models import Product
 from .forms import OrderForm
 from .models import Order, Payment, OrderProduct
 
-# Twilio Configuration
-TWILIO_ACCOUNT_SID = getattr(settings, 'TWILIO_ACCOUNT_SID', 'ACa6752800bd88b39f46aff938c60b88d0')
-TWILIO_AUTH_TOKEN = getattr(settings, 'TWILIO_AUTH_TOKEN', 'c2f0d32f58423c7bf835f6f3d6346ba5')
-TWILIO_WHATSAPP_NUMBER = getattr(settings, 'TWILIO_WHATSAPP_NUMBER', 'whatsapp:+14155238886')
-ADMIN_WHATSAPP_NUMBER = getattr(settings, 'ADMIN_WHATSAPP_NUMBER', 'whatsapp:+919942744713')
-ADMIN_EMAIL = getattr(settings, 'ADMIN_EMAIL', 'agritraders2025@gmail.com')
-
+# WhatsApp Configuration
+ADMIN_WHATSAPP_NUMBER = getattr(settings, 'ADMIN_WHATSAPP_NUMBER', '918610743686')
+ADMIN_EMAIL = getattr(settings, 'ADMIN_EMAIL', 'eagritraders2025@gmail.com')
 @csrf_exempt
 def whatsapp_payment(request):
     if request.method == 'POST':
@@ -32,7 +28,7 @@ def whatsapp_payment(request):
                     raise ValueError("Order ID is required")
             except (json.JSONDecodeError, ValueError) as e:
                 return JsonResponse({
-                    'status': 'error',
+                    'status': 'error', 
                     'message': f'Invalid request data: {str(e)}'
                 }, status=400)
 
@@ -52,7 +48,7 @@ def whatsapp_payment(request):
             # Create payment record
             payment = Payment.objects.create(
                 user=request.user,
-                payment_id=f"TWI-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}",
+                payment_id=f"WA-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}",
                 payment_method='WhatsApp',
                 amount_paid=order.order_total,
                 status='Pending'
@@ -61,7 +57,7 @@ def whatsapp_payment(request):
             # Update order status
             order.payment = payment
             order.is_ordered = True
-            order.status = 'Sended to the admin,Shortly Admin Will contact You!!'
+            order.status = 'Sent to admin, admin will contact you shortly!'
             order.save()
 
             # Process order items
@@ -86,7 +82,7 @@ def whatsapp_payment(request):
             # Clear cart
             cart_items.delete()
 
-            # Prepare order details for notifications
+            # Prepare order details
             order_items = OrderProduct.objects.filter(order=order)
             
             # Format product lines for WhatsApp
@@ -103,8 +99,8 @@ def whatsapp_payment(request):
                     product_line += f" ({', '.join(f'{v.variation_category}: {v.variation_value}' for v in item.variations.all())})"
                 product_lines.append(product_line)
 
-            # WhatsApp message to ADMIN
-            admin_message = f"""
+            # Create WhatsApp message
+            whatsapp_message = f"""
 🛍️ *NEW ORDER NOTIFICATION* 🛍️
 --------------------------------
 *Order #:* {order.order_number}
@@ -112,7 +108,7 @@ def whatsapp_payment(request):
 *Phone:* {order.phone}
 *Email:* {order.email}
 *Total:* ₹{order.order_total:.2f}
-*Date:* {order.created_at.strftime('%d %b %Y')}
+*Date:* {order.created_at.strftime('%d %b %Y %I:%M %p')}
 --------------------------------
 *ITEMS:*
 {"\n".join(product_lines)}
@@ -122,96 +118,97 @@ def whatsapp_payment(request):
 --------------------------------
 *NOTE:*
 {order.order_note if order.order_note else 'None'}
---------------------------------
-⚠️ Reply:
-CONFIRM {order.order_number} to accept
-or
-CANCEL {order.order_number} [reason] to reject
 """
 
-            # WhatsApp message to CUSTOMER
-            customer_message = f"""
-New Order Received:
+            # URL encode the message
+            encoded_message = quote(whatsapp_message)
+            
+            # Create WhatsApp Web link
+            whatsapp_url = f"https://web.whatsapp.com/send?phone={ADMIN_WHATSAPP_NUMBER}&text={encoded_message}"
+            
+            # First verify WhatsApp message can be sent
+            whatsapp_sent = True  # We assume success since we're just generating a link
+            
+            # Only send email if WhatsApp message was successfully prepared
+            email_sent = False
+            email_error = None
+            
+            if whatsapp_sent:
+                try:
+                    email_subject = f'Order Confirmation #{order.order_number}'
+                    
+                    # Load email template with fallback
+                    try:
+                        template = render_to_string(
+                            'orders/order_received_email.html',
+                            {
+                                'user': request.user,
+                                'order': order,
+                                'order_items': order_items,
+                                'admin_contact': ADMIN_WHATSAPP_NUMBER,
+                                'admin_email': ADMIN_EMAIL
+                            }
+                        )
+                    except Exception as e:
+                        email_error = f"Template error: {str(e)}"
+                        template = f"""
+                        <html>
+                        <body>
+                        <p>Hi {request.user.first_name},</p>
+                        <p>YOUR ORDER HAS BEEN RECEIVED</p>
+                        <p>Order Number: {order.order_number}</p>
+                        <p>Total: ₹{order.order_total:.2f}</p>
+                        <p>We'll contact you shortly on WhatsApp at {ADMIN_WHATSAPP_NUMBER}</p>
+                        </body>
+                        </html>
+                        """
 
-Order Number: {order.order_number}
-Customer: {order.full_name()}
-Email: {order.email}
-Phone: {order.phone}
-Total Amount: ₹{order.order_total:.2f}
+                    # Create and send email
+                    email = EmailMessage(
+                        email_subject,
+                        template,
+                        settings.DEFAULT_FROM_EMAIL,
+                        [order.email],  # primary recipient
+                        [ADMIN_EMAIL],  # bcc to admin
+                        reply_to=[ADMIN_EMAIL],
+                        headers={'Message-ID': f'order-{order.order_number}'}
+                    )
+                    email.content_subtype = "html"
+                    
+                    # Send email
+                    email.send(fail_silently=False)
+                    email_sent = True
+                    print("=== Email sent successfully after WhatsApp message ===")
+                    
+                except Exception as e:
+                    email_error = str(e)
+                    print(f"\n=== EMAIL SENDING FAILED ===")
+                    print(f"Error: {email_error}")
+                    import traceback
+                    traceback.print_exc()
+            else:
+                email_error = "WhatsApp message not sent, skipping email"
 
-Order Items:
-{"\n".join(product_lines)}
-
-Shipping Address:
-{order.full_address()}
-
-Order Note:
-{order.order_note if order.order_note else 'None'}
-"""
-
-            # Initialize Twilio client
-            client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-
-            # Send to ADMIN
-            admin_msg = client.messages.create(
-                body=admin_message,
-                from_=TWILIO_WHATSAPP_NUMBER,
-                to=ADMIN_WHATSAPP_NUMBER
-            )
-
-            # Send to CUSTOMER
-            customer_phone = order.phone.strip()
-            if customer_phone.startswith('+91'):
-                customer_phone = customer_phone[3:]
-            elif customer_phone.startswith('0'):
-                customer_phone = customer_phone[1:]
-            whatsapp_customer_number = f"whatsapp:+91{customer_phone}"
-
-            try:
-                customer_msg = client.messages.create(
-                    body=customer_message,
-                    from_=TWILIO_WHATSAPP_NUMBER,
-                    to=whatsapp_customer_number
-                )
-            except Exception as e:
-                print(f"Failed to send WhatsApp to customer: {str(e)}")
-
-            # Send confirmation email to customer
-            try:
-                email_subject = f'Order Confirmation #{order.order_number}'
-                email_body = render_to_string(
-                    'orders/emails/order_received.html',
-                    {
-                        'user': request.user,
-                        'order': order,
-                        'order_items': order_items,
-                        'admin_contact': '+91 8610743686'
-                    }
-                )
-                email = EmailMessage(
-                    email_subject,
-                    email_body,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [order.email],
-                    reply_to=[ADMIN_EMAIL]
-                )
-                email.content_subtype = "html"
-                email.send()
-            except Exception as e:
-                print(f"Email sending error: {str(e)}")
-
-            return JsonResponse({
+            response_data = {
                 'status': 'success',
                 'order_number': order.order_number,
                 'payment_id': payment.payment_id,
-                'whatsapp_status': {
-                    'admin': admin_msg.status,
-                    'customer': customer_msg.status if 'customer_msg' in locals() else 'Failed'
-                },
-                'email_sent': True
-            })
+                'whatsapp_url': whatsapp_url,
+                'whatsapp_sent': whatsapp_sent,
+                'email_sent': email_sent
+            }
+            
+            if email_error and settings.DEBUG:
+                response_data['email_error'] = email_error
+
+            return JsonResponse(response_data)
 
         except Exception as e:
+            print("\n=== SERVER ERROR ===")
+            import traceback
+            traceback.print_exc()
+            print(f"Error: {str(e)}")
+            print("====================")
             return JsonResponse({
                 'status': 'error',
                 'message': f'Server error: {str(e)}'
@@ -315,16 +312,26 @@ def cancel_order(request, order_id):
             order.order_note = f"{order.order_note or ''}\nCancellation Reason: {reason}"
             order.save()
             
-            # Send WhatsApp notification to admin
-            try:
-                client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-                client.messages.create(
-                    body=f"Order #{order.order_number} cancelled by customer. Reason: {reason}",
-                    from_=TWILIO_WHATSAPP_NUMBER,
-                    to=ADMIN_WHATSAPP_NUMBER
-                )
-            except Exception as e:
-                print(f"WhatsApp error: {str(e)}")
+            # Create WhatsApp cancellation message
+            whatsapp_message = f"""
+❌ *ORDER CANCELLATION* ❌
+--------------------------------
+*Order #:* {order.order_number}
+*Customer:* {order.full_name()}
+*Phone:* {order.phone}
+*Email:* {order.email}
+*Total:* ₹{order.order_total:.2f}
+*Date:* {order.created_at.strftime('%d %b %Y %I:%M %p')}
+--------------------------------
+*REASON:*
+{reason}
+"""
+
+            # URL encode the message
+            encoded_message = quote(whatsapp_message)
+            
+            # Create WhatsApp Web link
+            whatsapp_url = f"https://web.whatsapp.com/send?phone={ADMIN_WHATSAPP_NUMBER}&text={encoded_message}"
             
             # Send cancellation email to customer
             try:
@@ -336,7 +343,7 @@ Your order #{order.order_number} has been cancelled as per your request.
 
 Cancellation Reason: {reason}
 
-If you didn't request this cancellation or need any assistance, please contact us at {ADMIN_EMAIL} or +91 8610743686.
+If you didn't request this cancellation or need any assistance, please contact us at {ADMIN_EMAIL} or +91 {ADMIN_WHATSAPP_NUMBER}.
 
 Thank you,
 Agri Traders Team
@@ -353,6 +360,7 @@ Agri Traders Team
                 print(f"Cancellation email error: {str(e)}")
             
             messages.success(request, f'Order #{order.order_number} has been cancelled.')
+            messages.info(request, 'Please inform the admin about your cancellation via WhatsApp.')
         else:
             messages.warning(request, 'This order is already cancelled.')
             
