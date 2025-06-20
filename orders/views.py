@@ -120,11 +120,10 @@ def whatsapp_payment(request):
 {order.order_note if order.order_note else 'None'}
 """
 
-            # URL encode the message
             encoded_message = quote(whatsapp_message)
-            
-            # Create WhatsApp Web link
-            whatsapp_url = f"https://web.whatsapp.com/send?phone={ADMIN_WHATSAPP_NUMBER}&text={encoded_message}"
+
+# Create WhatsApp link (for normal app instead of web)
+            whatsapp_url = f"https://wa.me/{ADMIN_WHATSAPP_NUMBER}?text={encoded_message}"
             
             # First verify WhatsApp message can be sent
             whatsapp_sent = True  # We assume success since we're just generating a link
