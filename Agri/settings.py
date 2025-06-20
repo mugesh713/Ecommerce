@@ -162,3 +162,7 @@ EMAIL_HOST_PASSWORD = 'ownw mjde okso xclc'  # Make sure this is correct
 DEFAULT_FROM_EMAIL = 'eagritraders2025@gmail.com'  # Add this line
 
 
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://ecommerce-db72.onrender.com',
+]
