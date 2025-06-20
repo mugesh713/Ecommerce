@@ -78,6 +78,14 @@ TEMPLATES = [
     },
 ]
 
+INSTALLED_APPS += ['corsheaders']
+MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware'] + MIDDLEWARE
+
+CORS_ALLOWED_ORIGINS = [
+    'https://ecommerce-db72.onrender.com',
+]
+
+
 WSGI_APPLICATION = 'Agri.wsgi.application'
 
 AUTH_USER_MODEL = 'accounts.Account'
