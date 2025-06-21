@@ -5,7 +5,7 @@
 <!-- ========================= HERO CAROUSEL ========================= -->
 <section class="hero-section">
     <div class="container-fluid px-0">
-        <div id="homeCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div id="homeCarousel" class="carousel slide carousel-fade">
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="0" class="active"></button>
                 <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="1"></button>
@@ -13,128 +13,141 @@
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="{% static 'images/banners/new_add.jpg' %}" class="d-block w-100" alt="Agricultural Equipment" style="height: 500px; object-fit: cover;">
+                    <img src="{% static 'images/banners/new_add.jpg' %}" class="d-block w-100" alt="Agricultural Equipment">
                 </div>
                 <div class="carousel-item">
-                    <img src="{% static 'images/banners/2.jpg' %}" class="d-block w-100" alt="Farm Equipment" style="height: 500px; object-fit: cover;">
+                    <img src="{% static 'images/banners/2.jpg' %}" class="d-block w-100" alt="Farm Equipment">
                 </div>
                 <div class="carousel-item">
-                    <img src="{% static 'images/banners/3.jpg' %}" class="d-block w-100" alt="Agricultural Tools" style="height: 500px; object-fit: cover;">
+                    <img src="{% static 'images/banners/3.jpg' %}" class="d-block w-100" alt="Agricultural Tools">
                 </div>
             </div>
-            
         </div>
     </div>
 </section>
 
-<!-- Rest of your template remains the same -->
+<!-- ========================= POPULAR PRODUCTS ========================= -->
 <section class="section-name padding-y-sm">
-<div class="container">
+    <div class="container">
+        <header class="section-heading d-flex justify-content-between align-items-center mb-4">
+            <h3 class="section-title mb-0">Popular products</h3>
+            <a href="{% url 'store' %}" class="btn btn-outline-primary">See all</a>
+        </header>
 
-<header class="section-heading">
-    <a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
-    <h3 class="section-title">Popular products</h3>
-</header><!-- sect-heading -->
-
-<div class="row">
-    {% for product in products %}
-    <div class="col-md-3">
-        <div class="card card-product-grid">
-            <a href="{{ product.get_url }}" class="img-wrap"> 
-                {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.product_name }}">
-                {% else %}
-                    <img src="{% static 'images/placeholder.jpg' %}" alt="No image available">
-                {% endif %}
-            </a>
-            <figcaption class="info-wrap">
-                <a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
-                <div class="price mt-1">Rs {{ product.price }}</div>
-            </figcaption>
+        <div class="row">
+            {% for product in products %}
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card card-product-grid h-100">
+                    <a href="{{ product.get_url }}" class="img-wrap"> 
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.product_name }}">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.jpg' %}" class="img-fluid" alt="No image available">
+                        {% endif %}
+                    </a>
+                    <div class="info-wrap p-3">
+                        <a href="{{ product.get_url }}" class="title text-truncate d-block">{{ product.product_name }}</a>
+                        <div class="price mt-2">Rs {{ product.price }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-    </div> <!-- col.// -->
-    {% endfor %}
-</div> <!-- row.// -->
-
-</div><!-- container // -->
+    </div>
 </section>
-<!-- ========================= SECTION  END// ========================= -->
 
 <style>
-    /* Custom Styles */
+    /* Hero Carousel */
     .hero-section {
-        position: relative;
-        margin-bottom: 30px;
+        margin-bottom: 2rem;
+    }
+    .carousel-item img {
+        width: 100%;
+        height: 60vh;
+        object-fit: cover;
     }
     
-    .carousel {
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    /* Product Cards */
+    .card-product-grid {
+        border: 1px solid #eee;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s ease;
     }
-    
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 5%;
+    .card-product-grid:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-    
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-        background-color: rgba(0,0,0,0.5);
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        background-size: 60%;
-    }
-    
-    .card-product-grid .img-wrap {
-        height: 220px;
-        padding: 16px;
+    .img-wrap {
+        height: 180px;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 1rem;
+        background: #f8f9fa;
     }
-    
-    .card-product-grid .img-wrap img {
+    .img-wrap img {
         max-height: 100%;
         max-width: 100%;
         object-fit: contain;
     }
-    
-    .card-product-grid {
-        margin-bottom: 20px;
-        transition: all 0.3s ease;
+    .info-wrap {
+        padding: 1rem;
     }
-    
-    .card-product-grid:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    
     .section-title {
         position: relative;
-        display: inline-block;
-        padding-bottom: 15px;
+        padding-bottom: 10px;
     }
-    
     .section-title:after {
         content: '';
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 80px;
-        height: 4px;
+        width: 60px;
+        height: 3px;
         background: #0d6efd;
-        border-radius: 2px;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .carousel-item img {
+            height: 40vh;
+        }
+        .img-wrap {
+            height: 140px;
+        }
+    }
+    @media (max-width: 576px) {
+        .carousel-item img {
+            height: 30vh;
+        }
+        .img-wrap {
+            height: 120px;
+        }
+        .col-6 {
+            padding: 0 8px;
+        }
     }
 </style>
 
 <script>
-// Initialize carousel with options
 document.addEventListener('DOMContentLoaded', function() {
-    var myCarousel = document.getElementById('homeCarousel');
-    var carousel = new bootstrap.Carousel(myCarousel, {
-        interval: 3000,  // 3 seconds interval
+    // Initialize carousel with autoplay
+    var myCarousel = new bootstrap.Carousel(document.getElementById('homeCarousel'), {
+        interval: 3000,  // 3 second interval between slides
         wrap: true,      // Infinite looping
-        pause: "hover"   // Pause on hover
+        ride: 'carousel', // Auto-animate after initialization
+        pause: false     // Never pause on hover
+    });
+    
+    // Start cycling automatically
+    myCarousel.cycle();
+    
+    // Optional: Keep the indicators clickable for manual navigation
+    document.querySelectorAll('.carousel-indicators button').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var slideTo = this.getAttribute('data-bs-slide-to');
+            myCarousel.to(slideTo);
+        });
     });
 });
 </script>
