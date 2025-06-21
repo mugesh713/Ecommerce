@@ -1,7 +1,7 @@
 {% load static %}
 
 <div class="container-fluid" style="text-align:center;background-image: linear-gradient(to right, #3167EB , #7A7A7A);padding:10px;font-weight: 600;position:sticky;top:0;z-index:999;">
-  <a href="https://www.udemy.com/course/django-ecommerce-project-based-course-python-django-web-development/?couponCode=DJECOM" style="color: white;text-transform: uppercase;letter-spacing: 2px;"><span>&#x1F525</span> TRUST US AND PURCHASE PRODUCTS <span>&#x1F525</span></a>
+  <a href="" style="color: white;text-transform: uppercase;letter-spacing: 2px;"><span>&#x1F525</span> TRUST US AND PURCHASE PRODUCTS <span>&#x1F525</span></a>
 </div>
 
 <header class="section-header">
@@ -30,11 +30,11 @@
           </div>
         </div>
 
-        <!-- Search Bar -->
-        <div class="col-lg-5 col-md-6 col-12 order-3 order-md-2 mt-2 mt-md-0">
+        <!-- Search Bar - Adjusted for compact size -->
+        <div class="col-lg-4 col-md-5 col-12 order-3 order-md-2 mt-2 mt-md-0 px-0">
           <form action="{% url 'search' %}" class="search" method='GET'>
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="Search products..." name="keyword" required>
+            <div class="input-group" style="max-width: 400px;">
+              <input type="text" class="form-control" placeholder="Search products..." name="keyword" required style="width: 70%;">
               <div class="input-group-append">
                 <button class="btn btn-primary" type="submit">
                   <i class="fa fa-search"></i>
@@ -45,12 +45,12 @@
         </div>
 
         <!-- Store Button -->
-        <div class="col-lg-1 col-md-3 d-none d-lg-block">
+        <div class="col-lg-1 col-md-2 d-none d-lg-block">
           <a href="{% url 'store' %}" class="btn btn-outline-primary">Store</a>
         </div>
 
         <!-- User/Cart Section -->
-        <div class="col-lg-2 col-sm-6 col-12 order-2 order-lg-3">
+        <div class="col-lg-3 col-md-2 col-12 order-2 order-lg-3">
           <div class="d-flex justify-content-end align-items-center">
             {% if user.id is None %}
             <div class="widget-header mr-2">
@@ -112,6 +112,25 @@
     width: 250px;
   }
   
+  /* Full Width Adjustments */
+  @media (min-width: 992px) {
+    .search {
+      padding: 0 10px;
+    }
+    .search .input-group {
+      width: 100%;
+      max-width: 350px;
+    }
+  }
+  
+  /* Tablet and Medium Devices */
+  @media (max-width: 991px) {
+    .search .input-group {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+  
   /* Mobile Specific Styles */
   @media (max-width: 767px) {
     .header-main {
@@ -120,10 +139,13 @@
     
     .search {
       margin-top: 10px;
+      padding: 0;
     }
     
     .search .input-group {
       width: 100%;
+      max-width: 250px;
+      margin: 0 auto;
     }
     
     .widget-header {
@@ -143,17 +165,36 @@
   /* Small Mobile Devices */
   @media (max-width: 400px) {
     .widget-header {
-      display: none;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      font-size: 0.8rem;
+      margin-right: 5px;
     }
     
     .search {
       margin-top: 5px;
+      padding: 0;
+    }
+    
+    .search .input-group {
+      max-width: 200px;
     }
     
     .category-wrap .dropdown-menu {
       width: 200px;
       left: auto !important;
       right: 0 !important;
+    }
+    
+    .widget-header .title,
+    .widget-header div {
+      display: inline-block;
+      margin-right: 5px;
+    }
+    
+    .dark-transp {
+      display: none;
     }
   }
 </style>
