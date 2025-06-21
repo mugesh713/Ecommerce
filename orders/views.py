@@ -14,7 +14,7 @@ from .forms import OrderForm
 from .models import Order, Payment, OrderProduct
 
 # WhatsApp Configuration
-ADMIN_WHATSAPP_NUMBER = getattr(settings, 'ADMIN_WHATSAPP_NUMBER', '918610743686')
+ADMIN_WHATSAPP_NUMBER = getattr(settings, 'ADMIN_WHATSAPP_NUMBER', '91')
 ADMIN_EMAIL = getattr(settings, 'ADMIN_EMAIL', 'eagritraders2025@gmail.com')
 @csrf_exempt
 def whatsapp_payment(request):
