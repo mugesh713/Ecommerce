@@ -1,126 +1,130 @@
-/* Homepage Specific Styles */
-
-/* Hero Section */
+/* ========== MOBILE-FIRST STYLES ========== */
+/* Base Styles (All Devices) */
 .home-hero {
-    position: relative;
-    margin-bottom: 2rem;
-    border-radius: 0.5rem;
-    overflow: hidden;
+  position: relative;
+  margin-bottom: 1rem;
+  border-radius: 0.4rem;
+  overflow: hidden;
+  min-height: 180px;
+  max-width: 100vw;
 }
 
 .home-hero img {
-    width: 100%;
-    height: auto;
-    display: block;
+  width: 100%;
+  height: auto;
+  min-height: 180px;
+  max-height: 50vh;
+  object-fit: cover;
+  display: block;
 }
 
 .home-hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    padding: 2rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem;
+  text-align: center;
 }
 
 .home-hero-content {
-    max-width: 600px;
-    color: white;
-}
-
-.home-hero-content h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-}
-
-.home-hero-content p {
-    font-size: 1.2rem;
-    margin-bottom: 1.5rem;
-}
-
-.home-hero-btn {
-    padding: 0.75rem 2rem;
-    font-size: 1.1rem;
+  width: 92%;
+  color: white;
+  padding: 0.8rem;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 0.4rem;
+  margin: 0 auto;
 }
 
 /* Product Cards */
 .home-product-card {
-    transition: all 0.3s ease;
-    margin-bottom: 1.5rem;
-    border: none;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    height: 100%;
-}
-
-.home-product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  margin-bottom: 1rem;
+  border-radius: 0.4rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .home-product-img-wrap {
-    padding: 1rem;
-    text-align: center;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: #f8f9fa;
 }
 
 .home-product-img-wrap img {
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 .home-product-info {
-    padding: 1.25rem;
+  padding: 1rem;
 }
 
-.home-product-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #333;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+/* ========== RESPONSIVE BREAKPOINTS ========== */
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+  .home-hero {
+    min-height: 220px;
+  }
+  .home-hero img {
+    min-height: 220px;
+  }
+  .home-product-img-wrap {
+    height: 180px;
+  }
 }
 
-.home-product-price {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #28a745;
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  .home-hero {
+    min-height: 300px;
+  }
+  .home-hero img {
+    min-height: 300px;
+  }
+  .home-product-img-wrap {
+    height: 200px;
+  }
 }
 
-/* Section Headings */
-.home-section-heading {
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #eee;
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .home-hero {
+    min-height: 400px;
+  }
+  .home-hero img {
+    min-height: 400px;
+  }
 }
 
-.home-section-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #333;
+/* Special fixes for specific devices */
+/* iPhone 5/SE */
+@media (max-width: 320px) {
+  .home-hero {
+    min-height: 150px;
+  }
+  .home-hero img {
+    min-height: 150px;
+  }
+  .home-product-img-wrap {
+    height: 120px;
+  }
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .home-hero-content h1 {
-        font-size: 2rem;
-    }
-    
-    .home-hero-content p {
-        font-size: 1rem;
-    }
-    
-    .home-product-card {
-        margin-bottom: 1rem;
-    }
+/* Samsung Galaxy Fold */
+@media (max-width: 280px) {
+  .home-hero {
+    min-height: 120px;
+  }
+  .home-hero img {
+    min-height: 120px;
+  }
 }
